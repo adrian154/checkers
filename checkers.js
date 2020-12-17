@@ -144,7 +144,7 @@ const drawRing = (x, y, color) => {
 const drawPieces = () => {
 
     for(let piece of board) {
-        drawPiece(piece);
+        if(!piece.hidden) drawPiece(piece);
     }
 
 };
@@ -212,6 +212,42 @@ const initPieces = () => {
 
 };
 
+const animateMove = function(move) {
+
+    let frame = 0;
+    let animatedPiece = {x: selectedPiece.x, y: selectedPiece.y, side: selectedPiece.side, king: selectedPiece.king};
+
+    let initX = tileToScreen(animatedPiece.x);
+    let initY = tileToScreen(animatedPiece.y);
+    let finalX = tileToScreen(move.x);
+    let finalY = tileToScreen(move.y);
+
+    let func = () => {
+    
+        let t = frame / 60;
+
+        drawCheckerboard();
+        drawPieces();
+        drawPiece(animatedPiece, initX + (finalX - initX) * t, initY + (finalY - initY) * t);
+
+        frame++;
+        if(frame < 60) {
+            console.log(frame);
+            requestAnimationFrame(func);
+        } else {
+            console.log("donez");
+            selectedPiece.hidden = false;
+            clearAll();
+            nextTurn();
+            draw();
+        }
+
+    };
+    
+    func();
+
+};
+
 const onClickPiece = (piece) => {
     if(piece.side == currentTurn) {
         selectedPiece = piece;
@@ -221,12 +257,10 @@ const onClickPiece = (piece) => {
 };
 
 const onClickMove = (move) => {
-    //console.log(move);
+    animateMove(move);
     selectedPiece.x = move.x;
     selectedPiece.y = move.y;
-    clearAll();
-    nextTurn();
-    draw();
+    selectedPiece.hidden = true;
 };
 
 const addEventListeners = () => {

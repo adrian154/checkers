@@ -222,20 +222,21 @@ const animateMove = function(move) {
     let finalX = tileToScreen(move.x);
     let finalY = tileToScreen(move.y);
 
+    let frames = 15;
+    let a = 1 / (frames * frames);
+
     let func = () => {
     
-        let t = frame / 60;
+        let t = -a * (frame - frames) * (frame - frames) + 1;
 
         drawCheckerboard();
         drawPieces();
         drawPiece(animatedPiece, initX + (finalX - initX) * t, initY + (finalY - initY) * t);
 
         frame++;
-        if(frame < 60) {
-            console.log(frame);
+        if(frame < frames) {
             requestAnimationFrame(func);
         } else {
-            console.log("donez");
             selectedPiece.hidden = false;
             clearAll();
             nextTurn();
